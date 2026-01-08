@@ -1,0 +1,29 @@
+import java.nio.file.Paths
+
+ext {
+    newRelicPath        = Paths.get(rootDir.getAbsolutePath(), "DownloadedNewrelicAgents", "newrelic-${newRelicVersion}")
+    newRelicZipFile     = Paths.get(newRelicPath.toString(), "newrelic-java.zip")
+    newRelicAgentJarPath = Paths.get(newRelicPath.toString(), "newrelic", "newrelic.jar")
+}
+
+tasks.register('downloadNewRelic', Download) {
+    logger.info("Downloading newrelic-agent package of $newRelicVersion version into ${newRelicPath}")
+    acceptAnyCertificate false
+    overwrite false
+    src "https://download.newrelic.com/newrelic/java-agent/newrelic-agent/$newRelicVersion/newrelic-java-${newRelicVersion}.zip"
+    dest file(newRelicZipFile)
+}
+
+tasks.register('unzipNewRelic', Copy) {
+    dependsOn tasks.findByName('downloadNewRelic')
+    logger.info("Preparing to unzip newrelic-agent package")
+    def destination = newRelicPath
+    onlyIf {
+        !file(newRelicAgentJarPath.toString()).exists()
+    }
+    logger.info("Expanding newrelic-agent package of $newRelicVersion version into $destination")
+    from zipTree(file(newRelicZipFile))
+    into file(destination)
+}
+
+

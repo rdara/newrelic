@@ -1,0 +1,48 @@
+plugins {
+    id 'de.undercouch.download' version '5.1.0'
+}
+
+group = 'pers.rdara.examples'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+
+// Share newrelic tasks and logic with all subprojects
+subprojects {
+    apply from: rootProject.file('newrelic-build.gradle')
+    apply plugin: 'java'
+    apply plugin: 'application'
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        implementation "org.springframework.boot:spring-boot-starter-web:${springBootVersion}"
+        implementation "com.newrelic.agent.java:newrelic-api:${newRelicVersion}"
+        implementation "org.eclipse.jetty:jetty-server:${jettyVersion}"
+        implementation "org.eclipse.jetty:jetty-servlet:${jettyVersion}"
+        implementation "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}"
+        implementation "com.googlecode.json-simple:json-simple:1.1.1"
+        implementation "org.apache.httpcomponents:httpclient:${httpClientVersion}"
+        implementation "org.apache.commons:commons-lang3:${apacheCommonsLangVersion}"
+        implementation "org.apache.logging.log4j:log4j-core:${log4j2version}"
+        implementation "org.apache.logging.log4j:log4j-api:${log4j2version}"
+        implementation "org.apache.logging.log4j:log4j-slf4j-impl:${log4j2version}"
+
+        testImplementation 'org.junit.jupiter:junit-jupiter:5.8.2'
+    }
+
+    configurations.all {
+        exclude group: "org.apache.logging.log4j", module: "log4j-to-slf4j"
+        exclude group: "ch.qos.logback", module: "logback-classic"
+        exclude group: "ch.qos.logback", module: "logback-core"
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+}

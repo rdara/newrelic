@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Greeting Page</title>
+</head>
+<body>
+<h1>Greetings</h1>
+<p th:text="${message}"></p>
+<ul>
+    <li th:each="response : ${responses}" th:text="${response}"></li>
+</ul>
+<p>Note: Observe that the logs share the same trace ID for distributed tracing.</p>
+</body>
+</html>

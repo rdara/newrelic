@@ -1,0 +1,6 @@
+rootProject.name = 'newrelic'
+include 'AnotherWebServer'
+include 'RestServer'
+include 'NewrelicCustomLoggingDecorator'
+include 'NewrelicMockCollector'
+

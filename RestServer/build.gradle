@@ -1,0 +1,26 @@
+application {
+    mainClass = 'pers.rdara.examples.Application'
+}
+
+dependencies {
+    implementation project(':NewrelicMockCollector')
+}
+
+run {
+    dependsOn tasks.findByName('unzipNewRelic')
+
+    jvmArgs "-javaagent:${newRelicAgentJarPath}"
+
+    systemProperties = [
+        "newrelic.config.license_key": "REPLACE_WITH_YOUR_NEWRELIC_LICENSE_KEY",
+        "newrelic.config.application_logging.local_decorating.enabled": true,
+        "newrelic.config.app_name": "examples-${project.name}",
+
+        //Mock collector settings and none of these required when you have a valid newrelic license key
+        "newrelic.config.host": "localhost",
+        "newrelic.config.port": 1124,
+        "newrelic.config.metric_ingest_uri": "https://localhost:1124",
+        "newrelic.config.event_ingest_uri": "https://localhost:1124",
+        "newrelic.config.ca_bundle_path": "${rootDir}/NewrelicMockCollector/src/main/resources/server.cer"
+    ]
+}
