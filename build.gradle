@@ -9,9 +9,12 @@ repositories {
     mavenCentral()
 }
 
+// Apply centralized port configuration
+apply from: rootProject.file('ports.gradle')
 
 // Share newrelic tasks and logic with all subprojects
 subprojects {
+    apply from: rootProject.file('ports.gradle')
     apply from: rootProject.file('newrelic-build.gradle')
     apply plugin: 'java'
     apply plugin: 'application'

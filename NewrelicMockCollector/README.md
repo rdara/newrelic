@@ -4,19 +4,26 @@ This module provides a standalone mock implementation of the New Relic collector
 
 ## Purpose
 
-- **Separation of Concerns**: Designed as a standalone, sharable module for easy integration with other services.
+- **Local Development**: Test New Relic instrumentation without a production license
+- **Separation of Concerns**: Designed as a standalone, sharable module for easy integration with other services
+- **Educational Tool**: Learn how New Relic agents communicate with collectors
 
 ## Features
 
 - HTTP and HTTPS connectors on configurable ports
-- Mock responses for New Relic API methods
+- Mock responses for New Relic API methods (`connect`, `analytic_event_data`, `log_event_data`, etc.)
 - Automatic port availability checks to prevent conflicts
 - Graceful shutdown via JVM hooks
+- Jetty-based servlet implementation
 
 ## Configuration
 
-- **Default ports:** 1124 (HTTP) and 1125 (HTTPS)
-- **Keystore:** `keystore.jks` in resources (password: `changeit`)
+All port configurations are centralized in the root `ports.gradle` file:
+
+- **HTTP Port**: `mockCollectorHttpPort = 1121`
+- **HTTPS Port**: `mockCollectorHttpsPort = 1124`
+- **Keystore**: `keystore.jks` in resources (password: `changeit`)
+- **Certificate**: `server.cer` in resources
 
 ### Generating a Self-Signed Certificate
 
@@ -49,10 +56,15 @@ Integrate as a dependency in other submodules (e.g., `RestServer` or `AnotherWeb
 To start the mock collector directly, use the Gradle `run` target:
 
 ```sh
+cd NewrelicMockCollector
 ./gradlew run
 ```
 
-This will launch the server with the default configuration. You can then point your New Relic agent or integration to the mock endpoints.
+This will launch the server on:
+- HTTP: `http://localhost:1121`
+- HTTPS: `https://localhost:1124`
+
+You can then point your New Relic agent configuration to these mock endpoints. The collector will log each API method call and its invocation count.
 
 ## Dependencies
 

@@ -25,6 +25,7 @@ public class MockNewRelicCollectorServlet extends HttpServlet {
     protected void service(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setHeader("Name", "Offline Instrumentation Collector");
         response.setContentType("application/json");
+        response.setStatus(HttpServletResponse.SC_OK);
 
         String method = request.getParameter("method");
         incrementMethodCounter(method);
@@ -35,7 +36,7 @@ public class MockNewRelicCollectorServlet extends HttpServlet {
         } else if ("get_agent_commands".equals(method)) {
             responseNode.set("return_value", OBJECT_MAPPER.createArrayNode());
         } else if ("analytic_event_data".equals(method)) {
-            responseNode.putNull("return_value");
+            responseNode.put("return_value", "");
         } else if ("update_loaded_modules".equals(method)) {
             responseNode.set("return_value", OBJECT_MAPPER.createArrayNode());
         } else if ("log_event_data".equals(method))  {

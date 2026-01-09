@@ -16,14 +16,16 @@ run {
     jvmArgs "-javaagent:${newRelicAgentJarPath}"
 
     systemProperties = [
+            "server.port": anotherWebServerPort,
+            "restserver.url": "http://localhost:${restServerPort}/greeting",
             "newrelic.config.license_key": "dummy",
             "newrelic.config.app_name": "examples-${project.name}",
 
             //Newrelic Mock collector settings
             "newrelic.config.host": "localhost",
-            "newrelic.config.port": 1124,
-            "newrelic.config.metric_ingest_uri": "https://localhost:1124",
-            "newrelic.config.event_ingest_uri": "https://localhost:1124",
+            "newrelic.config.port": mockCollectorHttpsPort,
+            "newrelic.config.metric_ingest_uri": "https://localhost:${mockCollectorHttpsPort}",
+            "newrelic.config.event_ingest_uri": "https://localhost:${mockCollectorHttpsPort}",
             "newrelic.config.ca_bundle_path": "${rootDir}/NewrelicMockCollector/src/main/resources/server.cer"
     ]
 }

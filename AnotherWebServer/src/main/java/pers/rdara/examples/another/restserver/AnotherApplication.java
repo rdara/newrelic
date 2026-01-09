@@ -9,8 +9,9 @@ public class AnotherApplication {
 
     public static void main(String[] args) {
         SpringApplication app = new SpringApplication(AnotherApplication.class);
+        String port = System.getProperty("server.port", "12346");
         app.setDefaultProperties(Collections
-                .singletonMap("server.port", "12346"));
+                .singletonMap("server.port", port));
         app.run(args);
     }
 }

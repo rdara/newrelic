@@ -5,6 +5,7 @@ This repository demonstrates distributed tracing and observability using New Rel
 ## Table of Contents
 
 - [Overview](#overview)
+- [Architecture](#architecture)
 - [Key Concepts](#key-concepts)
 - [Prerequisites](#prerequisites)
 - [Getting Started](#getting-started)
@@ -15,6 +16,63 @@ This repository demonstrates distributed tracing and observability using New Rel
 ## Overview
 
 The suite consists of three main modules that simulate and demonstrate distributed tracing across services. It uses a mock New Relic collector to ingest telemetry data locally, enabling experimentation with trace context propagation and custom logging.
+
+## Architecture
+
+```mermaid
+graph TB
+    subgraph "Client Layer"
+        Client[Browser/HTTP Client]
+    end
+    
+    subgraph "Application Layer"
+        AnotherWebServer["AnotherWebServer<br/>(Port: 12346)<br/>Spring Boot + Thymeleaf"]
+        RestServer["RestServer<br/>(Port: 12345)<br/>Spring Boot REST API"]
+    end
+    
+    subgraph "Observability Layer"
+        CustomLogging["NewrelicCustomLoggingDecorator<br/>Log4j2 Context Provider<br/>(trace.id, span.id)"]
+        NRAgent1["New Relic Agent"]
+        NRAgent2["New Relic Agent"]
+    end
+    
+    subgraph "Mock Infrastructure"
+        MockCollector["NewrelicMockCollector<br/>HTTP: 1121, HTTPS: 1124<br/>Jetty Server"]
+    end
+    
+    subgraph "Configuration"
+        PortsConfig["ports.gradle<br/>Centralized Port Config"]
+    end
+    
+    Client -->|"HTTP GET /greeting"| AnotherWebServer
+    AnotherWebServer -->|"3x HTTP GET /greeting"| RestServer
+    AnotherWebServer -.->|uses| CustomLogging
+    AnotherWebServer -.->|instrumented by| NRAgent1
+    RestServer -.->|instrumented by| NRAgent2
+    NRAgent1 -->|telemetry data| MockCollector
+    NRAgent2 -->|telemetry data| MockCollector
+    CustomLogging -.->|injects trace context| AnotherWebServer
+    PortsConfig -.->|configures| AnotherWebServer
+    PortsConfig -.->|configures| RestServer
+    PortsConfig -.->|configures| MockCollector
+    
+    style AnotherWebServer fill:#e1f5ff
+    style RestServer fill:#e1f5ff
+    style MockCollector fill:#fff4e1
+    style CustomLogging fill:#f0f0f0
+    style PortsConfig fill:#f0f0f0
+    style NRAgent1 fill:#d4edda
+    style NRAgent2 fill:#d4edda
+```
+
+### Architecture Components
+
+- **AnotherWebServer**: Entry point web application that makes multiple HTTP calls to RestServer, demonstrating distributed trace propagation
+- **RestServer**: Backend REST API service that handles greeting requests
+- **NewrelicCustomLoggingDecorator**: Custom Log4j2 context provider that enriches logs with New Relic trace and span IDs
+- **NewrelicMockCollector**: Local mock implementation of New Relic collector API for development/testing without a production license
+- **New Relic Agents**: Java agents attached to both servers via `-javaagent` flag, automatically instrumenting code and sending telemetry
+- **ports.gradle**: Centralized configuration file managing all port assignments across modules
 
 ## Key Concepts
 
@@ -44,13 +102,13 @@ cd newrelic
 ### 2. Generate Self-Signed Certificate (Optional for HTTPS)
    Follow the steps in NewrelicMockCollector/README.md to generate server.cer and keystore.jks.
 
-### 3.Run the Mock Collector
+### 3. Run the Mock Collector
 
 ```sh
 cd NewrelicMockCollector
 ./gradlew run
 ```   
-   This starts the mock collector on ports 1124 (HTTP) and 1125 (HTTPS).
+   This starts the mock collector on ports 1121 (HTTP) and 1124 (HTTPS).
 
 ### 4. Run Example Servers
    Start each in separate terminals:
@@ -73,7 +131,7 @@ cd AnotherWebServer
 -  AnotherWebServer: A web server that calls RestServer endpoints, generating cross-service traces. Also decorates logs for observability.
 
 ## Troubleshooting
--  Port Conflicts: Ensure ports 1124 and 1125 are free. The mock collector checks availability on startup.
+-  Port Conflicts: Ensure ports 1121, 1124, 12345, and 12346 are free. The mock collector checks availability on startup. All ports are configured in `ports.gradle`.
 -  Certificate Errors: Verify server.cer and keystore.jks are in NewrelicMockCollector/src/main/resources/ with the correct password (changeit).
 -  No Response Errors: Confirm the mock collector is running and the New Relic agent is configured (e.g., in RestServer/build.gradle).
 -  Build Issues: Run ./gradlew clean build and ensure Java/Gradle versions match prerequisites.
