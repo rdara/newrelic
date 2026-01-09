@@ -9,8 +9,8 @@ import pers.rdara.examples.newrelic.collectors.MockNewRelicCollector;
 @Configuration
 public class MockCollectorConfig {
 
-    private static final int MOCK_COLLECTOR_HTTP_PORT = 1121;
-    private static final int MOCK_COLLECTOR_HTTPS_PORT = 1124;
+    private static final int MOCK_COLLECTOR_HTTP_PORT = Integer.parseInt(System.getProperty("mock.collector.http.port", "1121"));
+    private static final int MOCK_COLLECTOR_HTTPS_PORT = Integer.parseInt(System.getProperty("mock.collector.https.port", "1124"));
 
     @Bean
     @ConditionalOnMissingBean

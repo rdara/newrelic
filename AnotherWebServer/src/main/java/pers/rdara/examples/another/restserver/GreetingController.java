@@ -23,11 +23,12 @@ public class GreetingController {
     public String greeting(@RequestParam(value = "name", defaultValue = "World") String name, Model model) {
         List<String> responses = new ArrayList<>();
         LOGGER.info("AnotherRestServer GREETING Called");
+        String restServerUrl = System.getProperty("restserver.url", "http://localhost:12345/greeting");
         try (CloseableHttpClient httpClient = HttpClients.custom()
                 .disableConnectionState()  // Disables connection pooling to avoid idle logs
                 .build()) {
             for (int i = 0; i < 3; i++) {
-                HttpGet request = new HttpGet("http://localhost:12345/greeting");
+                HttpGet request = new HttpGet(restServerUrl);
                 String externalResponse = EntityUtils.toString(httpClient.execute(request).getEntity());
                 responses.add(externalResponse);
                 LOGGER.info("Response from external greeting: " + externalResponse);
@@ -35,7 +36,7 @@ public class GreetingController {
         } catch (Exception e) {
             LOGGER.error("Error calling external greeting", e);
         }
-        model.addAttribute("message", "Called http://localhost:12345/greeting of RestServer 3 times and the responses are...");
+        model.addAttribute("message", "Called " + restServerUrl + " of RestServer 3 times and the responses are...");
         model.addAttribute("responses", responses);
         return "greeting";
     }

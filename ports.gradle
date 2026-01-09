@@ -1,0 +1,10 @@
+// Centralized port configuration for all modules
+ext {
+    // Application ports
+    restServerPort = 12345
+    anotherWebServerPort = 12346
+    
+    // Mock collector ports
+    mockCollectorHttpPort = 1121
+    mockCollectorHttpsPort = 1124
+}

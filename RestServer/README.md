@@ -10,10 +10,15 @@ This module provides a RESTful service that demonstrates distributed tracing in 
 
 ## Features
 
-- RESTful API endpoints
+- RESTful API endpoints (Spring Boot)
 - Integration with NewrelicMockCollector
-- Automatic trace context propagation
+- Automatic trace context propagation via New Relic agent
 - Custom logging with trace and span IDs
+- Runs on port **12345** (configurable via `ports.gradle`)
+
+## Endpoints
+
+- `GET /greeting?name={name}` - Returns a greeting message with an incrementing ID
 
 ## Usage
 
@@ -21,14 +26,25 @@ This module provides a RESTful service that demonstrates distributed tracing in 
 2. Start the RestServer:
 
    ```sh
+   cd RestServer
    ./gradlew run
    ```
 
-3. Use tools like `curl` or Postman to interact with the REST endpoints. When called by AnotherWebServer, trace context is propagated and visible in logs.
+3. Test the endpoint:
+   ```sh
+   curl "http://localhost:12345/greeting?name=World"
+   ```
+
+4. When called by AnotherWebServer, trace context is automatically propagated and visible in logs.
 
 ## Configuration
 
-Configuration options (such as port and collector endpoint) can be set via environment variables or application properties.
+All port configurations are centralized in the root `ports.gradle` file:
+
+- **Application Port**: `restServerPort = 12345`
+- **Mock Collector HTTPS Port**: `mockCollectorHttpsPort = 1124`
+
+The New Relic agent is configured in `build.gradle` with system properties pointing to the mock collector.
 
 ## Building
 
