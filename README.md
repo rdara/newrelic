@@ -1,6 +1,58 @@
 # New Relic Distributed Tracing Example Suite
 
-This repository demonstrates distributed tracing and observability using New Relic, with example code for educational purposes. It allows developers to explore New Relic integrations and trace propagation without a production license, using a modular, standalone architecture.
+[![Java](https://img.shields.io/badge/Java-11+-blue.svg)](https://openjdk.java.net/)
+[![Gradle](https://img.shields.io/badge/Gradle-7.x-green.svg)](https://gradle.org/)
+[![New Relic](https://img.shields.io/badge/New%20Relic-Agent%208.x-1CE783.svg)](https://newrelic.com/)
+
+> **Learn New Relic instrumentation without a license.** This demo suite includes a **mock collector** that captures all agent telemetry locally—perfect for learning, testing, and development.
+
+## 🚀 Quick Start
+
+```bash
+# Clone and build
+git clone https://github.com/rdara/newrelic.git
+cd newrelic
+./gradlew build
+
+# Terminal 1: Start mock collector
+./gradlew :NewrelicMockCollector:run
+
+# Terminal 2: Start backend service
+./gradlew :RestServer:run
+
+# Terminal 3: Start frontend service
+./gradlew :AnotherWebServer:run
+
+# Terminal 4: Trigger a trace
+curl http://localhost:12346/greeting
+```
+
+Check the logs in RestServer and AnotherWebServer terminals—you'll see matching `trace.id` values proving distributed trace propagation! 🎉
+
+## 📚 Related Articles
+
+This repository accompanies a LinkedIn article series on New Relic observability:
+
+| # | Article | Topic |
+|---|---------|-------|
+| 1 | [Observability Made Easy: New Relic Quick Start](https://linkedin.com/in/rameshdara) | Getting started journey |
+| 2 | [New Relic Logging Configuration](https://linkedin.com/in/rameshdara) | forwarding vs local_decorating |
+| 3 | [Custom Configuration](https://linkedin.com/in/rameshdara) | Extending AgentConfigImpl |
+| 4 | [Temp Files Challenge](https://linkedin.com/in/rameshdara) | Windows deleteOnExit issue |
+| 5 | [OOM Issue - Fixed](https://linkedin.com/in/rameshdara) | httpasyncclient4 memory leak |
+| 6 | [Distributed Tracing](https://linkedin.com/in/rameshdara) | Zero-cost trace correlation |
+| 7 | [Mock Collector](https://linkedin.com/in/rameshdara) | Testing without a license |
+| 8 | [Discard Sending Data](https://linkedin.com/in/rameshdara) | Zero egress instrumentation |
+| 9 | [Control Data Ingestion Costs](https://linkedin.com/in/rameshdara) | Strategic cost optimization |
+| 10 | [Late Stage Ingestion Control](https://linkedin.com/in/rameshdara) | DROP_DATA without redeployment |
+
+## ✨ Key Features
+
+- **🔌 No License Required**: Mock collector simulates New Relic APIs locally
+- **🔗 Distributed Tracing**: See trace.id/span.id propagate across services
+- **📝 Log Decoration**: Custom Log4j2 provider enriches logs with trace context
+- **💰 Cost Optimization**: Demonstrates log-based tracing (free) vs span table (paid)
+- **⚙️ Centralized Config**: All ports managed in `ports.gradle`
 
 ## Table of Contents
 

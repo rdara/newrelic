@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            width: 1200px;
+            height: 900px;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #0a0a12;
+            color: #ffffff;
+            padding: 40px;
+        }
+        
+        h1 {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #1db954, #00b4d8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: rgba(255,255,255,0.5);
+            font-size: 14px;
+            margin-bottom: 40px;
+        }
+        
+        .diagram {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        /* Application Box */
+        .app-box {
+            background: linear-gradient(135deg, rgba(0,180,216,0.1), rgba(29,185,84,0.1));
+            border: 2px solid rgba(0,180,216,0.3);
+            border-radius: 16px;
+            padding: 25px 60px;
+            text-align: center;
+            width: 600px;
+        }
+        
+        .app-box .icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .app-box .title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #00b4d8;
+            margin-bottom: 5px;
+        }
+        
+        .app-box .subtitle-text {
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+        }
+        
+        /* Arrow */
+        .arrow-down {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .arrow-line {
+            width: 3px;
+            height: 30px;
+            background: linear-gradient(180deg, #00b4d8, rgba(255,255,255,0.3));
+        }
+        
+        .arrow-head {
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 12px solid rgba(255,255,255,0.3);
+        }
+        
+        /* Decision Box */
+        .decision {
+            background: rgba(234,179,8,0.1);
+            border: 2px solid rgba(234,179,8,0.3);
+            border-radius: 12px;
+            padding: 15px 30px;
+            text-align: center;
+        }
+        
+        .decision .label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 5px;
+        }
+        
+        .decision .text {
+            font-size: 14px;
+            font-weight: 600;
+            color: #eab308;
+        }
+        
+        /* Three paths */
+        .paths {
+            display: flex;
+            gap: 40px;
+            margin-top: 10px;
+        }
+        
+        .path {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            width: 280px;
+        }
+        
+        .path-arrow {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .path-arrow .line {
+            width: 60px;
+            height: 2px;
+        }
+        
+        .path-arrow.left .line {
+            background: linear-gradient(90deg, transparent, #1db954);
+        }
+        
+        .path-arrow.center .line {
+            width: 2px;
+            height: 30px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.3), #a78bfa);
+        }
+        
+        .path-arrow.right .line {
+            background: linear-gradient(90deg, #ef4444, transparent);
+        }
+        
+        .agent-box {
+            background: rgba(0,0,0,0.4);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            width: 100%;
+        }
+        
+        .agent-box.original {
+            border: 2px solid rgba(29,185,84,0.4);
+        }
+        
+        .agent-box.custom {
+            border: 2px solid rgba(139,92,246,0.4);
+        }
+        
+        .agent-box.mock {
+            border: 2px solid rgba(239,68,68,0.4);
+        }
+        
+        .agent-box .agent-icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+        
+        .agent-box .agent-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .agent-box.original .agent-title { color: #1db954; }
+        .agent-box.custom .agent-title { color: #a78bfa; }
+        .agent-box.mock .agent-title { color: #ef4444; }
+        
+        .agent-box .agent-desc {
+            font-size: 11px;
+            color: rgba(255,255,255,0.5);
+        }
+        
+        /* Destinations */
+        .destination {
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            width: 100%;
+        }
+        
+        .destination .dest-icon {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        
+        .destination .dest-title {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+        
+        .destination .dest-cost {
+            font-size: 18px;
+        }
+        
+        .destination.cloud {
+            border: 1px solid rgba(29,185,84,0.3);
+        }
+        .destination.cloud .dest-title { color: #1db954; }
+        
+        .destination.discard {
+            border: 1px solid rgba(139,92,246,0.3);
+        }
+        .destination.discard .dest-title { color: #a78bfa; }
+        
+        .destination.local {
+            border: 1px solid rgba(239,68,68,0.3);
+        }
+        .destination.local .dest-title { color: #ef4444; }
+        
+        /* Log decorator section */
+        .log-section {
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .log-decorator {
+            background: linear-gradient(135deg, rgba(249,115,22,0.1), rgba(234,179,8,0.1));
+            border: 2px solid rgba(249,115,22,0.3);
+            border-radius: 12px;
+            padding: 15px 40px;
+            text-align: center;
+        }
+        
+        .log-decorator .label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 5px;
+        }
+        
+        .log-decorator .text {
+            font-size: 14px;
+            font-weight: 600;
+            color: #f97316;
+        }
+        
+        .log-dest {
+            background: rgba(249,115,22,0.1);
+            border: 1px solid rgba(249,115,22,0.3);
+            border-radius: 10px;
+            padding: 15px 30px;
+            text-align: center;
+        }
+        
+        .log-dest .dest-icon {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        
+        .log-dest .dest-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #f97316;
+            margin-bottom: 3px;
+        }
+        
+        .log-dest .dest-desc {
+            font-size: 11px;
+            color: rgba(255,255,255,0.5);
+        }
+        
+        .plus-sign {
+            font-size: 24px;
+            color: rgba(255,255,255,0.3);
+            margin: 10px 0;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 11px;
+            color: rgba(255,255,255,0.3);
+        }
+    </style>
+</head>
+<body>
+    <h1>Data Flow Architecture</h1>
+    <p class="subtitle">Choose your telemetry path based on environment needs</p>
+    
+    <div class="diagram">
+        <!-- Application -->
+        <div class="app-box">
+            <div class="icon">📦</div>
+            <div class="title">Your Application</div>
+            <div class="subtitle-text">with New Relic Java Agent attached</div>
+        </div>
+        
+        <div class="arrow-down">
+            <div class="arrow-line"></div>
+            <div class="arrow-head"></div>
+        </div>
+        
+        <div class="decision">
+            <div class="label">Configuration Choice</div>
+            <div class="text">Which agent / What settings?</div>
+        </div>
+        
+        <!-- Three paths -->
+        <div class="paths">
+            <!-- Original Agent -->
+            <div class="path">
+                <div class="agent-box original">
+                    <div class="agent-icon">✅</div>
+                    <div class="agent-title">Original Agent</div>
+                    <div class="agent-desc">Full APM, Tracing, Metrics</div>
+                </div>
+                <div class="arrow-down">
+                    <div class="arrow-line" style="background: linear-gradient(180deg, #1db954, rgba(29,185,84,0.3));"></div>
+                    <div class="arrow-head" style="border-top-color: rgba(29,185,84,0.5);"></div>
+                </div>
+                <div class="destination cloud">
+                    <div class="dest-icon">☁️</div>
+                    <div class="dest-title">New Relic Cloud</div>
+                    <div class="dest-cost">💰💰💰</div>
+                </div>
+            </div>
+            
+            <!-- Custom Agent -->
+            <div class="path">
+                <div class="agent-box custom">
+                    <div class="agent-icon">🚫</div>
+                    <div class="agent-title">Custom Agent</div>
+                    <div class="agent-desc">discard_sending_data: true</div>
+                </div>
+                <div class="arrow-down">
+                    <div class="arrow-line" style="background: linear-gradient(180deg, #a78bfa, rgba(139,92,246,0.3));"></div>
+                    <div class="arrow-head" style="border-top-color: rgba(139,92,246,0.5);"></div>
+                </div>
+                <div class="destination discard">
+                    <div class="dest-icon">🗑️</div>
+                    <div class="dest-title">Discarded</div>
+                    <div class="dest-cost">$0</div>
+                </div>
+            </div>
+            
+            <!-- Mock Collector -->
+            <div class="path">
+                <div class="agent-box mock">
+                    <div class="agent-icon">🔄</div>
+                    <div class="agent-title">Mock Collector</div>
+                    <div class="agent-desc">host: localhost:1121</div>
+                </div>
+                <div class="arrow-down">
+                    <div class="arrow-line" style="background: linear-gradient(180deg, #ef4444, rgba(239,68,68,0.3));"></div>
+                    <div class="arrow-head" style="border-top-color: rgba(239,68,68,0.5);"></div>
+                </div>
+                <div class="destination local">
+                    <div class="dest-icon">🖥️</div>
+                    <div class="dest-title">Localhost</div>
+                    <div class="dest-cost">$0</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Log Decorator -->
+        <div class="plus-sign">+</div>
+        
+        <div class="log-section">
+            <div class="log-decorator">
+                <div class="label">Works with any agent</div>
+                <div class="text">Log Decorator (trace.id + span.id)</div>
+            </div>
+            <div class="arrow-down">
+                <div class="arrow-line" style="background: linear-gradient(180deg, #f97316, rgba(249,115,22,0.3));"></div>
+                <div class="arrow-head" style="border-top-color: rgba(249,115,22,0.5);"></div>
+            </div>
+            <div class="log-dest">
+                <div class="dest-icon">📊</div>
+                <div class="dest-title">Your Log Collector</div>
+                <div class="dest-desc">Splunk / Sumo Logic / ELK / Datadog</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">Ramesh Dara · linkedin.com/in/rameshdara · github.com/rdara/newrelic</div>
+</body>
+</html>

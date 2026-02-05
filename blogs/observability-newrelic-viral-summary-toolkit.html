@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Observability Cost Control Toolkit</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
+        
+        .diagram {
+            width: 1200px;
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 50px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            color: #1a1a2e;
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 18px;
+        }
+        
+        .toolkit-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .tool-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            border: 2px solid #e0e0e0;
+            border-radius: 16px;
+            padding: 30px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .tool-card.original {
+            border-color: #ff6b6b;
+        }
+        
+        .tool-card.discard {
+            border-color: #00d4aa;
+        }
+        
+        .tool-card.mock {
+            border-color: #4dabf7;
+        }
+        
+        .tool-card.decorator {
+            border-color: #ffd43b;
+        }
+        
+        .tool-card.drop {
+            border-color: #9775fa;
+        }
+        
+        .tool-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+        
+        .original .tool-icon { background: rgba(255, 107, 107, 0.15); }
+        .discard .tool-icon { background: rgba(0, 212, 170, 0.15); }
+        .mock .tool-icon { background: rgba(77, 171, 247, 0.15); }
+        .decorator .tool-icon { background: rgba(255, 212, 59, 0.15); }
+        .drop .tool-icon { background: rgba(151, 117, 250, 0.15); }
+        
+        .tool-name {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 10px;
+        }
+        
+        .tool-desc {
+            font-size: 15px;
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        
+        .tool-details {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .detail {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+        }
+        
+        .detail .label {
+            color: #999;
+        }
+        
+        .detail .value {
+            font-weight: 600;
+        }
+        
+        .detail .value.free { color: #00d4aa; }
+        .detail .value.paid { color: #ff6b6b; }
+        .detail .value.reduced { color: #ffa94d; }
+        
+        .cost-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+        
+        .cost-badge.free {
+            background: rgba(0, 212, 170, 0.15);
+            color: #00a085;
+        }
+        
+        .cost-badge.paid {
+            background: rgba(255, 107, 107, 0.15);
+            color: #e03131;
+        }
+        
+        .cost-badge.reduces {
+            background: rgba(151, 117, 250, 0.15);
+            color: #7c3aed;
+        }
+        
+        .strategy-section {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 16px;
+            padding: 35px;
+            color: #ffffff;
+        }
+        
+        .strategy-section h2 {
+            font-size: 24px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .env-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+        
+        .env-card {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .env-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .env-tools {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        
+        .env-tool {
+            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 4px;
+            background: rgba(0, 212, 170, 0.2);
+            color: #00d4aa;
+        }
+        
+        .env-tool.original {
+            background: rgba(255, 107, 107, 0.2);
+            color: #ff8787;
+        }
+        
+        .env-tool.none {
+            background: rgba(255, 255, 255, 0.1);
+            color: #a0a0b0;
+        }
+        
+        .footer-note {
+            text-align: center;
+            margin-top: 30px;
+            color: #999;
+            font-size: 14px;
+        }
+        
+        .footer-note a {
+            color: #4dabf7;
+            text-decoration: none;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram">
+        <div class="header">
+            <h1>🛠️ The Observability Cost Control Toolkit</h1>
+            <p>Composable building blocks—mix and match per environment</p>
+        </div>
+        
+        <div class="toolkit-grid">
+            <div class="tool-card original">
+                <span class="cost-badge paid">💰💰💰</span>
+                <div class="tool-icon">📊</div>
+                <div class="tool-name">Original New Relic Agent</div>
+                <div class="tool-desc">Full APM, distributed tracing, metrics, and dashboards. Complete observability with data egress to New Relic Cloud.</div>
+                <div class="tool-details">
+                    <div class="detail"><span class="label">Data:</span> <span class="value paid">→ New Relic</span></div>
+                    <div class="detail"><span class="label">Cost:</span> <span class="value paid">Per GB ingested</span></div>
+                </div>
+            </div>
+            
+            <div class="tool-card discard">
+                <span class="cost-badge free">$0</span>
+                <div class="tool-icon">🚫</div>
+                <div class="tool-name">Custom Agent (Discard Mode)</div>
+                <div class="tool-desc">Full instrumentation with zero data egress. Agent initializes, code is instrumented, trace context propagates—but nothing leaves your network.</div>
+                <div class="tool-details">
+                    <div class="detail"><span class="label">Data:</span> <span class="value free">→ Discarded</span></div>
+                    <div class="detail"><span class="label">Cost:</span> <span class="value free">Zero</span></div>
+                </div>
+            </div>
+            
+            <div class="tool-card mock">
+                <span class="cost-badge free">$0</span>
+                <div class="tool-icon">🎭</div>
+                <div class="tool-name">Mock Collector</div>
+                <div class="tool-desc">Local Jetty server implementing New Relic API. Perfect for learning, CI/CD testing, and offline development without a license.</div>
+                <div class="tool-details">
+                    <div class="detail"><span class="label">Data:</span> <span class="value free">→ Localhost</span></div>
+                    <div class="detail"><span class="label">Cost:</span> <span class="value free">Zero</span></div>
+                </div>
+            </div>
+            
+            <div class="tool-card decorator">
+                <span class="cost-badge free">$0</span>
+                <div class="tool-icon">🏷️</div>
+                <div class="tool-name">Log Decorator</div>
+                <div class="tool-desc">Adds trace.id and span.id to your logs. Query distributed traces in Splunk, Sumo Logic, or any log aggregator you already pay for.</div>
+                <div class="tool-details">
+                    <div class="detail"><span class="label">Data:</span> <span class="value free">→ Your logs</span></div>
+                    <div class="detail"><span class="label">Cost:</span> <span class="value free">Zero additional</span></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tool-card drop" style="margin-bottom: 30px;">
+            <span class="cost-badge reduces">Reduces 💰</span>
+            <div class="tool-icon">🗑️</div>
+            <div class="tool-name">DROP_DATA Rules</div>
+            <div class="tool-desc">Server-side filtering via NerdGraph API. Drop metrics, spans, or logs before they count against ingestion. No redeployment required—perfect for late-stage budget control.</div>
+            <div class="tool-details">
+                <div class="detail"><span class="label">Data:</span> <span class="value reduced">Filtered at ingestion</span></div>
+                <div class="detail"><span class="label">Cost:</span> <span class="value reduced">Significant reduction</span></div>
+            </div>
+        </div>
+        
+        <div class="strategy-section">
+            <h2>🎯 Environment Strategy</h2>
+            <div class="env-grid">
+                <div class="env-card">
+                    <div class="env-name">Local Dev</div>
+                    <div class="env-tools">
+                        <span class="env-tool none">No Agent</span>
+                    </div>
+                </div>
+                <div class="env-card">
+                    <div class="env-name">CI/CD</div>
+                    <div class="env-tools">
+                        <span class="env-tool">Mock Collector</span>
+                        <span class="env-tool">Discard Mode</span>
+                    </div>
+                </div>
+                <div class="env-card">
+                    <div class="env-name">QA / Test</div>
+                    <div class="env-tools">
+                        <span class="env-tool">Discard Mode</span>
+                        <span class="env-tool">Log Decorator</span>
+                    </div>
+                </div>
+                <div class="env-card">
+                    <div class="env-name">Performance</div>
+                    <div class="env-tools">
+                        <span class="env-tool original">Original Agent</span>
+                    </div>
+                </div>
+                <div class="env-card">
+                    <div class="env-name">Staging</div>
+                    <div class="env-tools">
+                        <span class="env-tool original">Original Agent</span>
+                        <span class="env-tool">Log Decorator</span>
+                    </div>
+                </div>
+                <div class="env-card">
+                    <div class="env-name">Production</div>
+                    <div class="env-tools">
+                        <span class="env-tool original">Original Agent</span>
+                        <span class="env-tool">Log Decorator</span>
+                        <span class="env-tool">DROP Rules</span>
+                    </div>
+                </div>
+                <div class="env-card">
+                    <div class="env-name">On-Prem</div>
+                    <div class="env-tools">
+                        <span class="env-tool">Discard Mode</span>
+                        <span class="env-tool">Log Decorator</span>
+                    </div>
+                </div>
+                <div class="env-card">
+                    <div class="env-name">Enterprise</div>
+                    <div class="env-tools">
+                        <span class="env-tool">Discard Mode</span>
+                        <span class="env-tool">Log Decorator</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-note">
+            Full implementation: <a href="https://github.com/rdara/newrelic">github.com/rdara/newrelic</a> · Ramesh Dara
+        </div>
+    </div>
+</body>
+</html>
